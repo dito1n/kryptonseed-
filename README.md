@@ -68,16 +68,16 @@ With the **Ian Coleman & Coldcard Methodology**, software does not invent random
 ### Entropy Mathematics (D6)
 Each roll of a balanced 6-sided die contributes:
 
-$$\log_2(6) pprox 2.5849625 	ext{ bits of pure entropy}$$
+$$\log_2(6) \approx 2.5849625 \text{ bits of pure entropy}$$
 
 - **12 BIP-39 Words (128 bits of entropy required)**:
-  $$50 	ext{ D6 rolls} \implies 6^{50} pprox 8.0779 	imes 10^{38} 	ext{ possibilities}$$
-  $$2^{128} pprox 3.4028 	imes 10^{38} 	ext{ possibilities}$$
+  $$50 \text{ D6 rolls} \implies 6^{50} \approx 8.0779 \times 10^{38} \text{ possibilities}$$
+  $$2^{128} \approx 3.4028 \times 10^{38} \text{ possibilities}$$
   *50 rolls comfortably exceed the 128-bit threshold.*
 
 - **24 BIP-39 Words (256 bits of entropy required)**:
-  $$100 	ext{ D6 rolls} \implies 6^{100} pprox 6.533 	imes 10^{77} 	ext{ possibilities}$$
-  $$2^{256} pprox 1.1579 	imes 10^{77} 	ext{ possibilities}$$
+  $$100 \text{ D6 rolls} \implies 6^{100} \approx 6.533 \times 10^{77} \text{ possibilities}$$
+  $$2^{256} \approx 1.1579 \times 10^{77} \text{ possibilities}$$
   *100 rolls satisfy military-grade 256-bit requirements.*
 
 ---
@@ -105,9 +105,9 @@ $$\log_2(6) pprox 2.5849625 	ext{ bits of pure entropy}$$
 - **Action**:
   1. The ASCII numeric string of rolls is hashed using **SHA-256** via the audited `@noble/hashes` library.
   2. For 12 words, the first **128 bits** (16 bytes) form canonical entropy.
-  3. The **Checksum** is computed by hashing the entropy with SHA-256 and taking the initial **4 bits** ($rac{128}{32} = 4$).
+  3. The **Checksum** is computed by hashing the entropy with SHA-256 and taking the initial **4 bits** ($\frac{128}{32} = 4$).
   4. Concatenating 128 entropy bits + 4 checksum bits yields **132 bits**.
-  5. The 132 bits are partitioned into **12 blocks of exactly 11 bits each** ($12 	imes 11 = 132$).
+  5. The 132 bits are partitioned into **12 blocks of exactly 11 bits each** ($12 \times 11 = 132$).
 - **Why it matters**: 11 binary bits yield $2^{11} = 2048$ possibilities (from `00000000000` = `0` to `11111111111` = `2047`), perfectly indexing the official BIP-39 dictionary.
 
 ---
@@ -187,7 +187,7 @@ Engineered with **zero build tools, zero external runtimes, and zero remote CDNs
 
 Audited using the repository's dedicated **`crypto-security-audit`** skill (`python .agents/skills/crypto-security-audit/scripts/audit_codebase.py`):
 
-1. **Entropy & PRNG Bias Audit**: Rejection sampling verified over 100,000 rolls with uniform $rac{1}{6}$ probability. All instances of `Math.random()` removed from sensitive key paths.
+1. **Entropy & PRNG Bias Audit**: Rejection sampling verified over 100,000 rolls with uniform $\frac{1}{6}$ probability. All instances of `Math.random()` removed from sensitive key paths.
 2. **DOM XSS Injection Testing**: User inputs sanitized using `escapeHTML()` before any DOM insertion.
 3. **Network Isolation & Content Security Policy (CSP)**: Strict `default-src 'self'` and `no-referrer` policies prevent external data exfiltration.
 4. **Memory Hygiene & Secret Leakage**: Zero `console.log` statements; master seeds, passphrases, and private keys reside exclusively in volatile memory and are cleared when the tab closes.

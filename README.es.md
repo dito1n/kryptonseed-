@@ -58,16 +58,16 @@ Con la **Metodología de Ian Coleman y Coldcard**, el software no inventa el aza
 ### La matemática de la entropía D6
 Cada cara de un dado regular de 6 caras aporta:
 
-$$\log_2(6) pprox 2.5849625 	ext{ bits de entropía pura}$$
+$$\log_2(6) \approx 2.5849625 \text{ bits de entropía pura}$$
 
 - **Para 12 Palabras BIP-39 (128 bits de entropía requeridos)**:
-  $$50 	ext{ tiradas D6} \implies 6^{50} pprox 8.0779 	imes 10^{38} 	ext{ posibilidades}$$
-  $$2^{128} pprox 3.4028 	imes 10^{38} 	ext{ posibilidades}$$
+  $$50 \text{ tiradas D6} \implies 6^{50} \approx 8.0779 \times 10^{38} \text{ posibilidades}$$
+  $$2^{128} \approx 3.4028 \times 10^{38} \text{ posibilidades}$$
   *50 tiradas superan con creces el límite de 128 bits.*
 
 - **Para 24 Palabras BIP-39 (256 bits de entropía requeridos)**:
-  $$100 	ext{ tiradas D6} \implies 6^{100} pprox 6.533 	imes 10^{77} 	ext{ posibilidades}$$
-  $$2^{256} pprox 1.1579 	imes 10^{77} 	ext{ posibilidades}$$
+  $$100 \text{ tiradas D6} \implies 6^{100} \approx 6.533 \times 10^{77} \text{ posibilidades}$$
+  $$2^{256} \approx 1.1579 \times 10^{77} \text{ posibilidades}$$
   *100 tiradas superan de forma holgada los 256 bits exigidos por la norma militar.*
 
 ---
@@ -95,9 +95,9 @@ $$\log_2(6) pprox 2.5849625 	ext{ bits de entropía pura}$$
 - **¿Qué se hace?**:
   1. La secuencia numérica de tiradas se toma como texto ASCII y se somete a la función hash criptográfica de un solo sentido **SHA-256** (mediante la librería formalmente auditada `@noble/hashes`).
   2. Para 12 palabras, se toman los primeros **128 bits** (16 bytes) del digest SHA-256 como la entropía canónica.
-  3. Se calcula el **Checksum**: la entropía se vuelve a hashear con SHA-256 y se extraen los primeros **4 bits** ($rac{128}{32} = 4$).
+  3. Se calcula el **Checksum**: la entropía se vuelve a hashear con SHA-256 y se extraen los primeros **4 bits** ($\frac{128}{32} = 4$).
   4. Se concatenan los 128 bits de entropía con los 4 bits de checksum, conformando un total exacto de **132 bits**.
-  5. Los 132 bits se dividen uniformemente en **12 bloques de 11 bits cada uno** ($12 	imes 11 = 132$).
+  5. Los 132 bits se dividen uniformemente en **12 bloques de 11 bits cada uno** ($12 \times 11 = 132$).
 - **¿Por qué es importante?**: Un bloque de 11 bits admite $2^{11} = 2048$ valores posibles (del `00000000000` = `0` al `11111111111` = `2047`). Esta división binaria es la base matemática exacta requerida para seleccionar palabras del diccionario oficial.
 
 ---
@@ -180,7 +180,7 @@ La aplicación fue sometida a una rigurosa auditoría automatizada y manual a tr
 
 ### 1. Auditoría de Entropía y Sesgo de Módulo (PRNG Bias Audit)
 - **Prueba**: Se analizó la distribución estadística de 100,000 tiradas generadas con el tirador virtual.
-- **Resultado**: El algoritmo de muestreo por rechazo (`rejection sampling` con corte en $4,294,967,292$) garantiza una probabilidad matemática idéntica de $rac{1}{6}$ para cada cara del dado, con cero desviación hacia valores inferiores.
+- **Resultado**: El algoritmo de muestreo por rechazo (`rejection sampling` con corte en $4,294,967,292$) garantiza una probabilidad matemática idéntica de $\frac{1}{6}$ para cada cara del dado, con cero desviación hacia valores inferiores.
 - **Corrección**: Se erradicaron todas las llamadas a `Math.random()` en firmas simuladas y frases de contraseña, reemplazándolas por generadores CSPRNG con hardware real.
 
 ### 2. Auditoría contra Inyección DOM y Cross-Site Scripting (DOM XSS)
