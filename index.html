@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KryptonSeed - Generador Criptográfico BIP-39 con Dados</title>
+  <meta name="description" content="Generación artesanal y matemáticamente verificable de frases semilla BIP-39 con tiradas de dados reales y virtuales.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: https://fonts.googleapis.com https://fonts.gstatic.com;">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+  <!-- Atmospheric Background -->
+  <div class="ambient-canvas">
+    <div class="glow-spot spot-primary"></div>
+    <div class="glow-spot spot-accent"></div>
+    <div class="precision-dots"></div>
+  </div>
+
+  <!-- Main Top Bar -->
+  <header class="top-nav">
+    <div class="brand-group">
+      <div class="brand-mark">
+        <span class="mark-core"><svg class="mark-svg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor"></circle></svg></span>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">KRYPTON<span class="text-gradient">SEED</span></div>
+        <div class="brand-tagline">BIP-39 Pure Entropy Foundry</div>
+      </div>
+    </div>
+
+    <div class="module-switcher" role="tablist">
+        <button class="module-tab is-active" id="tab-single-seed" role="tab" aria-selected="true">
+          <span class="tab-icon"><svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle></svg></span>
+          <span>Semilla Simple BIP-39</span>
+        </button>
+        <button class="module-tab" id="tab-multisig-vault" role="tab" aria-selected="false">
+          <span class="tab-icon"><svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+          <span>Bóveda Multifirma 2-de-3</span>
+          <span class="tab-new-badge">Multisig</span>
+        </button>
+        <button class="module-tab" id="tab-recovery-solver" role="tab" aria-selected="false">
+          <span class="tab-icon"><svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c0-1.571-1.274-2.85-2.846-2.85H14.73C14.072 3.12 12.193 2 10.021 2c-2.171 0-4.051 1.12-4.708 3H3.44c-1.572 0-2.846 1.279-2.846 2.85v1.863c1.88 0.657 3 2.536 3 4.708 0 2.172-1.12 4.051-3 4.708V21.15c0 1.571 1.274 2.85 2.846 2.85H5.31c0.657-1.88 2.537-3 4.709-3 2.172 0 4.051 1.12 4.709 3h1.864c1.572 0 2.846-1.279 2.846-2.85v-1.864c-1.88-0.657-3-2.536-3-4.708 0-2.172 1.12-4.051 3-4.708V7.85z"></path></svg></span>
+          <span>Recuperador de Semillas</span>
+          <span class="tab-new-badge">Checksum Inverso</span>
+        </button>
+      </div>
+
+      <div class="nav-controls">
+        <!-- Theme Toggle (Dark / Light) -->
+        <button class="icon-toggle theme-toggle-btn" id="btn-theme-toggle" title="Cambiar tema Claro / Oscuro" aria-label="Cambiar tema Claro / Oscuro">
+          <svg class="theme-icon sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="theme-icon moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+
+        <!-- Language Toggle (ES / EN) -->
+        <button class="icon-toggle lang-toggle-btn" id="btn-lang-toggle" title="Cambiar idioma (ES / EN)" aria-label="Cambiar idioma">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          <span class="lang-current">ES</span>
+        </button>
+
+        <!-- Audio Toggle Button -->
+      <button class="icon-toggle active" id="btn-audio-toggle" title="Activar/Silenciar sonido (M)" aria-label="Control de audio">
+        <svg class="audio-on-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+        <svg class="audio-off-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <line x1="23" y1="9" x2="17" y2="15"></line>
+          <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
+        <span class="audio-label">FX On</span>
+      </button>
+
+      <!-- Status Indicator -->
+      <div class="system-status-pill">
+        <span class="status-radar" id="global-status-dot"></span>
+        <span class="status-text" id="global-status-text">Paso 1 · Entropía Cruda</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-viewport">
+    <!-- Pipeline Stepper -->
+    <nav class="pipeline-stepper" aria-label="Etapas criptográficas">
+      <div class="pipeline-step is-active" id="pipeline-step-1">
+        <div class="step-badge">01</div>
+        <div class="step-info">
+          <span class="step-headline">Tiradas de Dados D6</span>
+          <span class="step-subline">Recolección de Entropía</span>
+        </div>
+      </div>
+      <div class="pipeline-connector" id="connector-1-2"></div>
+      <div class="pipeline-step is-idle" id="pipeline-step-2">
+        <div class="step-badge">02</div>
+        <div class="step-info">
+          <span class="step-headline">SHA-256 & Checksum</span>
+          <span class="step-subline">Normalización Binaria</span>
+        </div>
+      </div>
+      <div class="pipeline-connector" id="connector-2-3"></div>
+      <div class="pipeline-step is-idle" id="pipeline-step-3">
+        <div class="step-badge">03</div>
+        <div class="step-info">
+          <span class="step-headline">Diccionario BIP-39</span>
+          <span class="step-subline">Mapeo a Palabras</span>
+        </div>
+      </div>
+      <div class="pipeline-connector" id="connector-3-4"></div>
+      <div class="pipeline-step is-idle" id="pipeline-step-4">
+        <div class="step-badge">04</div>
+        <div class="step-info">
+          <span class="step-headline">Derivación Multichain</span>
+          <span class="step-subline">BTC, ETH, SOL</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- STEP 1 VIEW: DICE FOUNDRY -->
+    <section class="foundry-card step-panel" id="view-step-1">
+      <div class="card-bar">
+        <div>
+          <h1 class="stage-title">Generador de Entropía Analógica</h1>
+          <p class="stage-desc">Un dado de 6 caras ($D6$) físico o generado mediante Web Crypto API aporta $\log_2(6) \approx 2.585$ bits por lanzamiento. La aleatoriedad se consolidará mediante SHA-256 para blindar la semilla.</p>
+        </div>
+
+        <div class="segmented-control" role="group" aria-label="Longitud de la semilla">
+          <button class="seg-btn is-active" id="btn-mode-12" data-target="50" data-words="12">
+            <span class="seg-title">12 Palabras</span>
+            <span class="seg-sub">50 tiradas · 128 bits</span>
+          </button>
+          <button class="seg-btn" id="btn-mode-24" data-target="100" data-words="24">
+            <span class="seg-title">24 Palabras</span>
+            <span class="seg-sub">100 tiradas · 256 bits</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive 3D Dice Arena -->
+      <div class="stage-arena">
+        <div class="arena-display">
+          <div class="dice-scene">
+            <div class="dice-shadow" id="dice-shadow"></div>
+            <div class="dice-cube" id="dice-cube" role="img" aria-label="Dado 3D interactivo">
+              <div class="dice-face face-1"><span class="pip"></span></div>
+              <div class="dice-face face-2"><span class="pip"></span><span class="pip"></span></div>
+              <div class="dice-face face-3"><span class="pip"></span><span class="pip"></span><span class="pip"></span></div>
+              <div class="dice-face face-4">
+                <div class="pip-row"><span class="pip"></span><span class="pip"></span></div>
+                <div class="pip-row"><span class="pip"></span><span class="pip"></span></div>
+              </div>
+              <div class="dice-face face-5">
+                <div class="pip-row"><span class="pip"></span><span class="pip"></span></div>
+                <div class="pip-row"><span class="pip"></span></div>
+                <div class="pip-row"><span class="pip"></span><span class="pip"></span></div>
+              </div>
+              <div class="dice-face face-6">
+                <div class="pip-row"><span class="pip"></span><span class="pip"></span></div>
+                <div class="pip-row"><span class="pip"></span></div>
+                <div class="pip-row"><span class="pip"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Telemetry -->
+          <div class="telemetry-panel">
+            <div class="telemetry-cell cell-primary">
+              <span class="cell-label">Último Valor</span>
+              <div class="cell-large-val" id="display-last-val">—</div>
+            </div>
+
+            <div class="telemetry-cell">
+              <span class="cell-label">Progreso de Tiradas</span>
+              <div class="cell-val-row">
+                <span class="val-mono highlight" id="stat-current-rolls">0</span>
+                <span class="val-slash">/</span>
+                <span class="val-mono dim" id="stat-target-rolls">50</span>
+              </div>
+            </div>
+
+            <div class="telemetry-cell">
+              <span class="cell-label">Entropía Estimada</span>
+              <div class="cell-val-row">
+                <span class="val-mono" id="stat-entropy-bits">0.00</span>
+                <span class="val-unit">bits</span>
+              </div>
+            </div>
+
+            <div class="telemetry-cell">
+              <span class="cell-label">Calidad Criptográfica</span>
+              <div class="security-level-tag level-pending" id="stat-security-badge">
+                <span class="tag-dot"></span>
+                <span id="stat-security-label">Recolectando...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meter Bar -->
+        <div class="energy-gauge">
+          <div class="gauge-track">
+            <div class="gauge-fill" id="gauge-fill" style="width: 0%"></div>
+          </div>
+          <div class="gauge-meta">
+            <span class="gauge-pct" id="gauge-pct-text">0.0% completado</span>
+            <span class="gauge-status" id="gauge-status-text">Faltan 50 tiradas para cumplir con el estándar BIP-39</span>
+          </div>
+        </div>
+
+        <!-- Action Grid -->
+        <div class="action-grid">
+          <div class="action-block">
+            <div class="block-header">
+              <span class="block-title"><svg class="inline-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor"></circle></svg> <span data-i18n="cryptoVirtualRollerTitle">Tirador Virtual Criptográfico</span></span>
+              <span class="block-sub">`window.crypto` (Sin sesgo de módulo)</span>
+            </div>
+            
+            <div class="button-strip">
+              <button class="btn btn-primary" id="btn-roll-1">
+                <span class="btn-icon"></span>
+                <span>Tirar 1 Dado</span>
+                <kbd class="kbd-hint">Space</kbd>
+              </button>
+              <button class="btn btn-secondary" id="btn-roll-5">
+                <span>+5 Tiradas</span>
+              </button>
+              <button class="btn btn-accent" id="btn-roll-complete">
+                <span class="btn-icon"><svg class="inline-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span>
+                <span data-i18n="btnRollComplete">Completar Todas</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="action-block">
+            <div class="block-header">
+              <span class="block-title"><svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg> <span data-i18n="manualTableRollTitle">Entrada de Dados Físicos en Mesa</span></span>
+              <span class="block-sub">Registra tiradas de tus propios dados</span>
+            </div>
+
+            <div class="numpad-row">
+              <button class="key-d6" data-d6="1" title="Tecla 1">1<kbd>1</kbd></button>
+              <button class="key-d6" data-d6="2" title="Tecla 2">2<kbd>2</kbd></button>
+              <button class="key-d6" data-d6="3" title="Tecla 3">3<kbd>3</kbd></button>
+              <button class="key-d6" data-d6="4" title="Tecla 4">4<kbd>4</kbd></button>
+              <button class="key-d6" data-d6="5" title="Tecla 5">5<kbd>5</kbd></button>
+              <button class="key-d6" data-d6="6" title="Tecla 6">6<kbd>6</kbd></button>
+            </div>
+
+            <div class="batch-entry-group">
+              <input type="text" id="input-batch" class="batch-input" placeholder="O pega una secuencia (ej: 421653241...)" autocomplete="off" spellcheck="false">
+              <button class="btn btn-secondary btn-sm" id="btn-apply-batch">Cargar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audit Ribbon -->
+      <div class="audit-ribbon">
+        <div class="ribbon-head">
+          <div class="head-left">
+            <h3 class="ribbon-title">Cinta de Auditoría de Entropía</h3>
+            <span class="chip-counter" id="chip-counter-badge">0 elementos registrados</span>
+          </div>
+          <div class="head-right">
+            <button class="btn-ghost" id="btn-undo-roll" title="Deshacer última tirada (Z)" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
+              <span>Deshacer</span>
+              <kbd class="kbd-inline">Z</kbd>
+            </button>
+            <button class="btn-ghost danger" id="btn-clear-all" title="Borrar todo" disabled>
+              <span>Limpiar Todo</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="tape-scroll-arena" id="tape-scroll-arena">
+          <div class="empty-state-notice" id="empty-state-notice">
+            <div class="empty-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.65;"><rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor"></circle></svg></div>
+            <p>La cinta de entropía está vacía. Presiona <kbd>Space</kbd> para lanzar o usa las teclas numéricas <kbd>1</kbd> a <kbd>6</kbd>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Action -->
+      <div class="stage-footer">
+        <div class="sequence-inspector">
+          <span class="inspector-label">Cadena D6 en Memoria:</span>
+          <div class="inspector-box">
+            <code class="inspector-code" id="raw-entropy-string">--</code>
+            <button class="btn-copy-code" id="btn-copy-sequence" title="Copiar cadena">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-proceed" id="btn-proceed-step2" disabled>
+          <span>Paso 2: Calcular SHA-256 & Checksum</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 2 VIEW: SHA-256 & CHECKSUM ENGINE -->
+    <section class="foundry-card step-panel" id="view-step-2" style="display: none;">
+      <div class="card-bar">
+        <div>
+          <div class="step-tag-pill">Paso 02 de 04 · Procesamiento Criptográfico</div>
+          <h1 class="stage-title">SHA-256 & Checksum BIP-39</h1>
+          <p class="stage-desc">La secuencia de dados se transforma mediante SHA-256 para extraer los bits puros de entropía. Luego, se calcula el Checksum exacto y se agrupan en paquetes de 11 bits.</p>
+        </div>
+
+        <button class="btn btn-secondary btn-sm" id="btn-back-to-step1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <span>Volver a Tiradas</span>
+        </button>
+      </div>
+
+      <!-- Step 2 Content Sections -->
+      <div class="crypto-breakdown-grid">
+        <div class="crypto-card">
+          <div class="crypto-card-head">
+            <div class="badge-icon-title">
+              <span class="icon-chip">#</span>
+              <div>
+                <h3>Hash SHA-256 de los Dados</h3>
+                <span class="sub-chip">SHA256(UTF8(cadena_dados))</span>
+              </div>
+            </div>
+            <button class="btn-ghost-sm" id="btn-copy-sha256" title="Copiar Hash SHA-256">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span>Copiar Hash</span>
+            </button>
+          </div>
+          <div class="hash-display-box">
+            <code class="hash-code-text" id="display-sha256-hex">Calculando...</code>
+          </div>
+          <div class="hash-meta-row">
+            <span>256 bits hexadecimales (64 caracteres)</span>
+            <span class="meta-tag-ok"><svg class="inline-svg-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Sin sesgo de módulo</span>
+          </div>
+        </div>
+
+        <div class="crypto-card">
+          <div class="crypto-card-head">
+            <div class="badge-icon-title">
+              <span class="icon-chip"></span>
+              <div>
+                <h3>Composición del Genoma Binario</h3>
+                <span class="sub-chip" id="bits-summary-label">128 bits entropía + 4 bits Checksum = 132 bits</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bitstream-container">
+            <div class="bitstream-legend">
+              <div class="legend-item"><span class="legend-dot entropy-dot"></span> <span id="legend-entropy-text">Entropía (128 bits)</span></div>
+              <div class="legend-item"><span class="legend-dot checksum-dot"></span> <span id="legend-checksum-text">Checksum (4 bits)</span></div>
+            </div>
+            <div class="bitstream-box" id="display-bitstream"></div>
+          </div>
+
+          <div class="checksum-explanation-box">
+            <div class="check-formula">
+              <strong>Fórmula del Checksum:</strong>
+              <code>SHA256(Entropía)[0..<span id="chk-bits-count">4</span> bits]</code>
+            </div>
+            <p id="chk-explanation-text">El Checksum valida matemáticamente que ni una sola palabra esté fuera de orden o alterada. Cualquier billetera rechazará la semilla si este valor no coincide.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="eleven-bit-section">
+        <div class="eleven-bit-head">
+          <div>
+            <h3>Partición en Bloques de 11 Bits (Índices BIP-39)</h3>
+            <p class="sub-text">Cada grupo de 11 bits se convierte a decimal (rango 0 a 2047) para ubicar su palabra en el diccionario oficial.</p>
+          </div>
+          <div class="block-count-badge" id="block-count-badge">12 Bloques generados</div>
+        </div>
+
+        <div class="eleven-blocks-grid" id="eleven-blocks-container"></div>
+      </div>
+
+      <div class="stage-footer">
+        <button class="btn btn-secondary" id="btn-back-footer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <span>Regresar a Tiradas</span>
+        </button>
+
+        <button class="btn btn-proceed" id="btn-proceed-step3">
+          <span>Paso 3: Revelar Palabras BIP-39</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 3 VIEW: BIP-39 WORDLIST & VAULT -->
+    <section class="foundry-card step-panel" id="view-step-3" style="display: none;">
+      <div class="card-bar">
+        <div>
+          <div class="step-tag-pill">Paso 03 de 04 · Diccionario Oficial BIP-39</div>
+          <h1 class="stage-title">Bóveda de Frase Semilla Mnemónica</h1>
+          <p class="stage-desc">Los índices de 11 bits han sido traducidos a las palabras oficiales del estándar BIP-39 en inglés. Esta frase es tu llave maestra universal.</p>
+        </div>
+
+        <div class="step3-top-actions">
+          <button class="btn btn-secondary btn-sm" id="btn-back-to-step2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Volver a SHA-256</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Security Controls Bar -->
+      <div class="vault-toolbar">
+        <div class="vault-status-indicator">
+          <span class="safe-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Checksum Válido · Compatible con 100% de Billeteras</span>
+          </span>
+          <span class="words-count-tag" id="vault-words-count-tag">12 Palabras</span>
+        </div>
+
+        <div class="vault-action-buttons">
+          <button class="btn-ghost-sm" id="btn-toggle-mask" title="Ocultar o mostrar palabras de la pantalla">
+            <svg class="eye-open-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg class="eye-closed-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            <span id="mask-btn-text">Ocultar Semilla</span>
+          </button>
+
+          <button class="btn-ghost-sm" id="btn-copy-seed" title="Copiar frase completa">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Copiar Frase</span>
+          </button>
+
+          <button class="btn-ghost-sm" id="btn-download-backup" title="Descargar archivo de respaldo seguro">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Descargar Respaldo</span>
+          </button>
+
+                    <button class="btn-ghost-sm" id="btn-qr-seed-phrase" title="Ver Código QR de la Frase Semilla BIP-39 (Para Hardware Wallets Air-Gapped)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="7" y="7" width="1" height="1" fill="currentColor"></rect><rect x="17" y="7" width="1" height="1" fill="currentColor"></rect><rect x="7" y="17" width="1" height="1" fill="currentColor"></rect><path d="M10 14h4v4h-4z"></path></svg>
+            <span>Ver QR Semilla</span>
+          </button>
+
+          <button class="btn-ghost-sm" id="btn-quick-download-coldcard" title="Descargar directamente archivo de tarjeta fría imprimible">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> <span>Descargar Tarjeta Fría</span>
+          </button>
+
+          <button class="btn-ghost-sm" id="btn-open-print-modal" title="Imprimir o personalizar Tarjeta de Respaldo Físico / Cold Card">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> <span>Imprimir / Personalizar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Words Vault Grid -->
+      <div class="words-grid-wrapper" id="words-grid-wrapper">
+        <div class="bip39-words-grid" id="bip39-words-grid"></div>
+      </div>
+
+      <!-- Plain Text Box -->
+      <div class="seed-compact-box">
+        <div class="compact-head">
+          <span class="compact-title">Frase en Texto Plano (Para importar en MetaMask, Phantom, Ledger, etc.):</span>
+          <span class="sub-chip">Separada por espacios simples</span>
+        </div>
+        <div class="seed-text-display" id="seed-plaintext-container">
+          <code id="seed-plaintext-code">--</code>
+        </div>
+      </div>
+
+      <!-- Recovery Tool Crosslink Notice -->
+      <div class="recovery-crosslink-card">
+        <div class="crosslink-icon"><svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c0-1.571-1.274-2.85-2.846-2.85H14.73C14.072 3.12 12.193 2 10.021 2c-2.171 0-4.051 1.12-4.708 3H3.44c-1.572 0-2.846 1.279-2.846 2.85v1.863c1.88 0.657 3 2.536 3 4.708 0 2.172-1.12 4.051-3 4.708V21.15c0 1.571 1.274 2.85 2.846 2.85H5.31c0.657-1.88 2.537-3 4.709-3 2.172 0 4.051 1.12 4.709 3h1.864c1.572 0 2.846-1.279 2.846-2.85v-1.864c-1.88-0.657-3-2.536-3-4.708 0-2.172 1.12-4.051 3-4.708V7.85z"></path></svg></div>
+        <div class="crosslink-body">
+          <strong>¿Perdiste la última palabra de un respaldo antiguo?</strong>
+          <span>El estándar BIP-39 restringe las opciones: exactamente 128 opciones para 12 palabras, o sólo 8 para 24 palabras.</span>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btn-goto-recovery">Abrir Recuperador ↗</button>
+      </div>
+
+      <!-- Step 3 Footer Navigation -->
+      <div class="stage-footer">
+        <button class="btn btn-secondary" id="btn-back-step2-footer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <span>Regresar a SHA-256</span>
+        </button>
+
+        <button class="btn btn-proceed" id="btn-proceed-step4">
+          <span>Paso 4: Derivar Billeteras Multichain</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 4 VIEW: MULTICHAIN DERIVATION (BTC, ETH, SOL) -->
+    <section class="foundry-card step-panel" id="view-step-4" style="display: none;">
+      <div class="card-bar">
+        <div>
+          <div class="step-tag-pill">Paso 04 de 04 · Derivación HD Multichain</div>
+          <h1 class="stage-title">Billeteras & Direcciones para Transaccionar</h1>
+          <p class="stage-desc">Mediante el algoritmo estándar PBKDF2 (HMAC-SHA512) y las rutas de derivación BIP-32/BIP-44/BIP-84, esta semilla genera tus direcciones operativas para realizar transacciones en Bitcoin, Ethereum y Solana.</p>
+        </div>
+
+        <div class="step4-top-actions">
+          <button class="btn btn-secondary btn-sm" id="btn-back-to-step3">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Volver a Palabras</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Passphrase & Plausible Deniability Decoy Suite -->
+      <div class="passphrase-panel">
+        <div class="passphrase-header">
+          <div class="passphrase-title-group">
+            <span class="passphrase-icon"><svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+            <div>
+              <div class="deniability-badge-row">
+                <span class="deniability-tag">Estándar BIP-39 · Negación Plausible</span>
+                <span class="wrench-attack-tag">Defensa contra "Ataque de los $5" ($5 Wrench Attack)</span>
+              </div>
+              <h3 class="passphrase-main-heading">La "Palabra 25" (Passphrase Opcional) & Billetera Señuelo</h3>
+              <p>El estándar BIP-39 no solo te protege de hackers remotos, sino también de extorsión física o secuestro. Con las <strong>mismas palabras de dados</strong>, cualquier contraseña genera una bóveda paralela matemáticamente invisible.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode Selector: Decoy vs Hidden Vault vs Split Comparison -->
+        <div class="vault-world-tabs" id="vault-world-tabs">
+          <button class="vault-world-tab is-active" data-world="secret">
+            <span class="tab-dot dot-purple"></span>
+            <strong>Bóveda Secreta (Con Passphrase)</strong>
+            <span>Para el 99% de tus fondos</span>
+          </button>
+          <button class="vault-world-tab" data-world="decoy">
+            <span class="tab-dot dot-green"></span>
+            <strong>Billetera Señuelo (Sin Passphrase)</strong>
+            <span>Para entregar bajo coacción ($50)</span>
+          </button>
+          <button class="vault-world-tab" data-world="compare">
+            <span class="tab-dot dot-split"></span>
+            <strong>Comparativa Lado a Lado</strong>
+            <span>Dos universos con los mismos dados</span>
+          </button>
+        </div>
+
+        <!-- Passphrase Input & Generator Bar -->
+        <div class="passphrase-controls-box" id="passphrase-controls-box">
+          <div class="passphrase-input-row">
+            <div class="passphrase-input-wrapper">
+              <input type="password" id="input-passphrase" class="passphrase-input" placeholder="Escribe tu 'Palabra 25' secreta (ej: MiClaveSecretaCypherpunk2026!)" spellcheck="false">
+              <button class="btn-toggle-pass" id="btn-toggle-pass-visibility" title="Mostrar/Ocultar contraseña"></button>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="btn-gen-diceware-pass" title="Generar frase de alta entropía tipo Diceware">
+              <svg class="inline-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg> <span data-i18n="suggestSecurePassphrase">Sugerir Segura</span>
+            </button>
+            <button class="btn btn-accent btn-sm" id="btn-apply-passphrase">
+              <span>Aplicar & Derivar</span>
+            </button>
+          </div>
+
+          <!-- Entropy & Security Bar -->
+          <div class="passphrase-strength-bar">
+            <div class="strength-meter-track">
+              <div class="strength-meter-fill" id="passphrase-strength-fill" style="width: 0%"></div>
+            </div>
+            <div class="strength-info-line">
+              <span id="passphrase-strength-label">Sin contraseña adicional (Billetera visible por defecto)</span>
+              <span class="security-tip-chip"><svg class="inline-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5h6.18z"></path></svg> NUNCA anotes esta palabra en la misma placa de metal de tus 12/24 palabras</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dual World Side-by-Side Comparison Container (Hidden by default, toggled in 'compare' tab) -->
+        <div class="dual-world-comparison-stage" id="dual-world-comparison-stage" style="display: none;">
+          <!-- Decoy World Column -->
+          <div class="world-column world-decoy">
+            <div class="world-col-header">
+              <div class="world-title-badge green-badge">Billetera Visible / Señuelo (Decoy)</div>
+              <h4>Contraseña: (Vacía / Sin Passphrase)</h4>
+              <p>La que entregas al atacante o auditor forzoso. Guarda una pequeña suma visible para apaciguar cualquier amenaza.</p>
+            </div>
+            <div class="world-col-body">
+              <div class="world-addr-item">
+                <span class="world-addr-label">Bitcoin Native SegWit:</span>
+                <code class="world-addr-code" id="decoy-btc-addr">--</code>
+              </div>
+              <div class="world-addr-item">
+                <span class="world-addr-label">Ethereum / EVM Address:</span>
+                <code class="world-addr-code" id="decoy-eth-addr">--</code>
+              </div>
+              <div class="world-addr-item">
+                <span class="world-addr-label">Semilla Maestra SHA-512 (Decoy):</span>
+                <code class="world-seed-code" id="decoy-master-seed">--</code>
+              </div>
+            </div>
+          </div>
+
+          <!-- Secret World Column -->
+          <div class="world-column world-secret">
+            <div class="world-col-header">
+              <div class="world-title-badge purple-badge">Bóveda Oculta / Secreta (Hidden Vault)</div>
+              <h4>Contraseña: <span id="secret-passphrase-display">--</span></h4>
+              <p>Tu bóveda real con el 99% de tu patrimonio. Matemáticamente invisible e indemostrable para cualquier atacante.</p>
+            </div>
+            <div class="world-col-body">
+              <div class="world-addr-item">
+                <span class="world-addr-label">Bitcoin Native SegWit:</span>
+                <code class="world-addr-code text-cyan" id="secret-btc-addr">--</code>
+              </div>
+              <div class="world-addr-item">
+                <span class="world-addr-label">Ethereum / EVM Address:</span>
+                <code class="world-addr-code text-cyan" id="secret-eth-addr">--</code>
+              </div>
+              <div class="world-addr-item">
+                <span class="world-addr-label">Semilla Maestra SHA-512 (Secreta):</span>
+                <code class="world-seed-code text-cyan" id="secret-master-seed">--</code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Master Seed Hex Ribbon -->
+      <div class="master-seed-box">
+        <div class="master-seed-head">
+          <span class="seed-label">Semilla Maestra Binaria (512 bits / 64 bytes via PBKDF2 HMAC-SHA512):</span>
+          <button class="btn-ghost-sm" id="btn-copy-master-seed">Copiar Semilla 512b</button>
+        </div>
+        <code class="master-seed-code" id="display-master-seed">Calculando...</code>
+      </div>
+
+      <!-- Multichain Cards Grid -->
+      <div class="chains-grid">
+        <!-- 1. BITCOIN -->
+        <div class="chain-card chain-btc">
+          <div class="chain-card-header">
+            <div class="chain-badge-group">
+              <span class="chain-logo-badge btc-color">₿</span>
+              <div>
+                <h3>Bitcoin (BTC)</h3>
+                <span class="chain-path-tag">Native SegWit (BIP-84) · `m/84'/0'/0'/0/0`</span>
+              </div>
+            </div>
+            <span class="chain-compat-pill">Electrum · Sparrow · Ledger</span>
+          </div>
+
+          <div class="chain-card-body">
+            <div class="address-field-block">
+              <div class="field-label-row">
+                <span class="field-label">Dirección Pública para Recibir:</span>
+                <button class="btn-copy-field btn-qr-field" id="btn-qr-btc-addr" title="Escanear Código QR Air-Gapped">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="7" y="7" width="1" height="1" fill="currentColor"></rect><rect x="17" y="7" width="1" height="1" fill="currentColor"></rect><rect x="7" y="17" width="1" height="1" fill="currentColor"></rect><path d="M10 14h4v4h-4z"></path></svg>
+                <span>QR</span>
+              </button>
+              <button class="btn-copy-field" id="btn-copy-btc-addr">Copiar</button>
+              </div>
+              <div class="address-box">
+                <code class="addr-text" id="display-btc-address">bc1q...</code>
+              </div>
+            </div>
+
+            <div class="privkey-field-block">
+              <div class="field-label-row">
+                <span class="field-label">Llave Privada WIF (Gastar fondos):</span>
+                <div class="field-actions">
+                  <button class="btn-reveal-field" id="btn-reveal-btc-wif">Mostrar</button>
+                  <button class="btn-copy-field" id="btn-copy-btc-wif">Copiar</button>
+                </div>
+              </div>
+              <div class="privkey-box">
+                <code class="privkey-text is-blurred" id="display-btc-wif">••••••••••••••••••••••••••••••••••••••••••••••••••••</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. ETHEREUM & EVM -->
+        <div class="chain-card chain-eth">
+          <div class="chain-card-header">
+            <div class="chain-badge-group">
+              <span class="chain-logo-badge eth-color"><svg class="chain-logo-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 12l8 4.5L20 12 12 2zm0 17.5L4 13.5 12 22l8-8.5-8 5.5z"/></svg></span>
+              <div>
+                <h3>Ethereum & EVM Chains</h3>
+                <span class="chain-path-tag">Standard EVM (BIP-44) · `m/44'/60'/0'/0/0`</span>
+              </div>
+            </div>
+            <span class="chain-compat-pill">MetaMask · Rabby · Trust</span>
+          </div>
+
+          <div class="chain-card-body">
+            <div class="address-field-block">
+              <div class="field-label-row">
+                <span class="field-label">Dirección Pública (Todas las redes EVM):</span>
+                <button class="btn-copy-field btn-qr-field" id="btn-qr-eth-addr" title="Escanear Código QR Air-Gapped">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="7" y="7" width="1" height="1" fill="currentColor"></rect><rect x="17" y="7" width="1" height="1" fill="currentColor"></rect><rect x="7" y="17" width="1" height="1" fill="currentColor"></rect><path d="M10 14h4v4h-4z"></path></svg>
+                <span>QR</span>
+              </button>
+              <button class="btn-copy-field" id="btn-copy-eth-addr">Copiar</button>
+              </div>
+              <div class="address-box">
+                <code class="addr-text" id="display-eth-address">0x...</code>
+              </div>
+            </div>
+
+            <div class="privkey-field-block">
+              <div class="field-label-row">
+                <span class="field-label">Llave Privada Hex (64 caracteres):</span>
+                <div class="field-actions">
+                  <button class="btn-reveal-field" id="btn-reveal-eth-priv">Mostrar</button>
+                  <button class="btn-copy-field" id="btn-copy-eth-priv">Copiar</button>
+                </div>
+              </div>
+              <div class="privkey-box">
+                <code class="privkey-text is-blurred" id="display-eth-priv">••••••••••••••••••••••••••••••••••••••••••••••••••••</code>
+              </div>
+            </div>
+
+            <div class="evm-networks-tags">
+              <span class="net-pill">Ethereum</span>
+              <span class="net-pill">Arbitrum</span>
+              <span class="net-pill">Optimism</span>
+              <span class="net-pill">Polygon</span>
+              <span class="net-pill">BNB Chain</span>
+              <span class="net-pill">Base</span>
+              <span class="net-pill">Avalanche</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. SOLANA -->
+        <div class="chain-card chain-sol">
+          <div class="chain-card-header">
+            <div class="chain-badge-group">
+              <span class="chain-logo-badge sol-color">◎</span>
+              <div>
+                <h3>Solana (SOL)</h3>
+                <span class="chain-path-tag">SLIP-0010 ed25519 · `m/44'/501'/0'/0'`</span>
+              </div>
+            </div>
+            <span class="chain-compat-pill">Phantom · Solflare · Backpack</span>
+          </div>
+
+          <div class="chain-card-body">
+            <div class="address-field-block">
+              <div class="field-label-row">
+                <span class="field-label">Dirección Pública en Base58:</span>
+                <button class="btn-copy-field btn-qr-field" id="btn-qr-sol-addr" title="Escanear Código QR Air-Gapped">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="7" y="7" width="1" height="1" fill="currentColor"></rect><rect x="17" y="7" width="1" height="1" fill="currentColor"></rect><rect x="7" y="17" width="1" height="1" fill="currentColor"></rect><path d="M10 14h4v4h-4z"></path></svg>
+                <span>QR</span>
+              </button>
+              <button class="btn-copy-field" id="btn-copy-sol-addr">Copiar</button>
+              </div>
+              <div class="address-box">
+                <code class="addr-text" id="display-sol-address">...</code>
+              </div>
+            </div>
+
+            <div class="privkey-field-block">
+              <div class="field-label-row">
+                <span class="field-label">Llave Privada Base58 (Formato Phantom CLI):</span>
+                <div class="field-actions">
+                  <button class="btn-reveal-field" id="btn-reveal-sol-priv">Mostrar</button>
+                  <button class="btn-copy-field" id="btn-copy-sol-priv">Copiar</button>
+                </div>
+              </div>
+              <div class="privkey-box">
+                <code class="privkey-text is-blurred" id="display-sol-priv">••••••••••••••••••••••••••••••••••••••••••••••••••••</code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export All Keys & Addresses -->
+      <div class="export-all-strip">
+        <div class="export-meta">
+          <strong data-i18n="exportDossierPrompt">¿Deseas respaldar todas las direcciones y claves maestras generadas?</strong>
+          <span data-i18n="exportDossierDesc">Descarga un informe completo y formateado para tu caja fuerte o archivo en frío.</span>
+        </div>
+        <div class="export-btn-group">
+          <button class="btn btn-accent" id="btn-export-full-html" title="Descargar dossier formateado visual para abrir en cualquier navegador o imprimir">
+            <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span data-i18n="btnExportDossierHtml">Dossier Visual (.html)</span>
+          </button>
+          <button class="btn btn-secondary" id="btn-export-full-json" title="Descargar datos en formato JSON estructurado">
+            <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <span data-i18n="btnExportDossierJson">Estructurado (.json)</span>
+          </button>
+          <button class="btn btn-secondary" id="btn-export-full-dossier" title="Descargar archivo de texto plano con saltos de línea Windows y UTF-8 BOM">
+            <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span data-i18n="btnExportDossierTxt">Texto (.txt)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 4 Footer Navigation -->
+      <div class="stage-footer">
+        <button class="btn btn-secondary" id="btn-back-step3-footer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <span>Regresar a Palabras BIP-39</span>
+        </button>
+
+        <button class="btn btn-secondary" id="btn-restart-flow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+          <span>Generar Otra Semilla con Dados</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Context Callout -->
+    
+    <!-- ====================================================================
+         MULTISIG 2-OF-3 FOUNDRY MODULE VIEW
+         ==================================================================== -->
+    <section class="foundry-card multisig-panel" id="view-multisig-vault" style="display: none;">
+      <div class="card-bar">
+        <div>
+          <div class="step-tag-pill">Módulo de Custodia Institucional · 2 de 3</div>
+          <h1 class="stage-title">Bóveda Multifirma (Multisig 2-de-3)</h1>
+          <p class="stage-desc">Protección de búnker financiero: combina 3 llaves independientes (ej: dados en casa, MetaMask en PC y Phantom en móvil). Se requieren obligatoriamente 2 firmas de 3 para autorizar cualquier transacción.</p>
+        </div>
+
+        <div class="multisig-summary-badge">
+          <span class="badge-dot-green"></span>
+          <span>Quórum: 2 de 3 Firmas Requeridas</span>
+        </div>
+      </div>
+
+      <!-- The 3 Signers Grid -->
+      <div class="signers-grid">
+        <!-- Signer 1: Key A (Master Dice Seed / Hardware) -->
+        <div class="signer-card" id="card-signer-1">
+          <div class="signer-head">
+            <div class="signer-title-row">
+              <span class="signer-badge-num">1</span>
+              <div>
+                <h4 data-i18n="signer1Title">Firmante A (Casa / Hardware)</h4>
+                <span class="signer-sub-meta" data-i18n="signer1Desc">Semilla de dados / Coldcard / Hardware</span>
+              </div>
+            </div>
+          </div>
+          <div class="signer-actions-bar">
+            <button class="btn-signer-action" id="btn-sync-signer-1" title="Sincronizar con la semilla de dados actual">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span data-i18n="btnUseCurrentSeed">Usar Semilla Actual</span>
+            </button>
+          </div>
+
+          <div class="signer-fields">
+            <div class="field-item">
+              <span class="signer-field-label" data-i18n="btcPubSecpLabel">Clave Pública Bitcoin (secp256k1 compressed):</span>
+              <input type="text" id="signer-1-btc-pub" class="signer-input" value="0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798" spellcheck="false">
+            </div>
+            <div class="field-item">
+              <span class="signer-field-label" data-i18n="evmAddressLabel">Dirección EVM / Ethereum:</span>
+              <input type="text" id="signer-1-eth-addr" class="signer-input" value="0x71C8F67c0F548FF123d6aB047A46c4fF0D6d7f87" spellcheck="false">
+            </div>
+          </div>
+        </div>
+
+        <!-- Signer 2: Key B (Office / Mobile / MetaMask) -->
+        <div class="signer-card" id="card-signer-2">
+          <div class="signer-head">
+            <div class="signer-title-row">
+              <span class="signer-badge-num">2</span>
+              <div>
+                <h4 data-i18n="signer2Title">Firmante B (Móvil / MetaMask)</h4>
+                <span class="signer-sub-meta" data-i18n="signer2Desc">MetaMask en móvil o segundo dispositivo</span>
+              </div>
+            </div>
+          </div>
+          <div class="signer-actions-bar">
+            <button class="btn-wallet-metamask" id="btn-connect-metamask" title="Conectar billetera MetaMask real">
+              <span class="wallet-icon">
+                <svg class="wallet-icon-svg" width="18" height="18" viewBox="0 0 32 32" fill="none">
+                  <path d="M28.4 4.3L17.5 12.2l2.3-5.5L28.4 4.3z" fill="#E2761B"/>
+                  <path d="M3.6 4.3l10.8 7.9-2.3-5.5L3.6 4.3z" fill="#E4761B"/>
+                  <path d="M24.7 22.3l-2.9 4.4 6.1 1.7 1.8-6-5-0.1z" fill="#D7C1B3"/>
+                  <path d="M2.3 22.4l1.8 6 6.1-1.7-2.9-4.4-5 0.1z" fill="#D7C1B3"/>
+                  <path d="M9.8 14.1l-1.7 2.6 6.2.3-.2-6.7-4.3 3.8z" fill="#233447"/>
+                  <path d="M22.2 14.1l-4.4-3.8-.2 6.7 6.2-.3-1.6-2.6z" fill="#233447"/>
+                  <path d="M9.8 14.1l4.4 3.8-.2-6.7-4.2 2.9z" fill="#CC621B"/>
+                  <path d="M22.2 14.1l-4.2-2.9-.2 6.7 4.4-3.8z" fill="#CC621B"/>
+                  <path d="M14.2 17.9l-4.4-3.8-1.7 2.6 6.1 1.2z" fill="#E4761B"/>
+                  <path d="M17.8 17.9l6.1-1.2-1.7-2.6-4.4 3.8z" fill="#E4761B"/>
+                  <path d="M16 19.3l-4-1.4 3.3 2.7.7-.3.7.3 3.3-2.7-4 1.4z" fill="#D7C1B3"/>
+                  <path d="M16 23.5l-3.2-1.9 2.5-.2.7-1.1.7 1.1 2.5.2-3.2 1.9z" fill="#233447"/>
+                </svg>
+              </span>
+              <span data-i18n="btnConnectMetaMask">Conectar MetaMask</span>
+            </button>
+            <button class="btn-signer-action" id="btn-roll-signer-2" title="Generar llave aleatoria segura con dados">
+              <svg class="inline-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle></svg> 
+              <span data-i18n="btnRollDiceSigner">Tirar Dados</span>
+            </button>
+          </div>
+
+          <div class="signer-fields">
+            <div class="field-item">
+              <span class="signer-field-label" data-i18n="btcPubSecpLabel">Clave Pública Bitcoin (secp256k1 compressed):</span>
+              <input type="text" id="signer-2-btc-pub" class="signer-input" value="02c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5" spellcheck="false">
+            </div>
+            <div class="field-item">
+              <div class="field-label-row">
+                <span class="signer-field-label" data-i18n="evmAddressLabel">Dirección EVM / MetaMask:</span>
+                <span class="wallet-conn-badge" id="badge-metamask-conn" style="display: none;">● Conectado</span>
+              </div>
+              <input type="text" id="signer-2-eth-addr" class="signer-input" value="0x2546BcD3c84621e976D8185a91A922aE77ECEc30" spellcheck="false">
+            </div>
+          </div>
+        </div>
+
+        <!-- Signer 3: Key C (Bank Safe / Backup / Phantom) -->
+        <div class="signer-card" id="card-signer-3">
+          <div class="signer-head">
+            <div class="signer-title-row">
+              <span class="signer-badge-num">3</span>
+              <div>
+                <h4 data-i18n="signer3Title">Firmante C (Bóveda / Phantom)</h4>
+                <span class="signer-sub-meta" data-i18n="signer3Desc">Billetera Phantom en móvil / Caja bancaria</span>
+              </div>
+            </div>
+          </div>
+          <div class="signer-actions-bar">
+            <button class="btn-wallet-phantom" id="btn-connect-phantom" title="Conectar billetera Phantom real">
+              <span class="wallet-icon">
+                <svg class="wallet-icon-svg" width="18" height="18" viewBox="0 0 32 32" fill="none">
+                  <rect width="32" height="32" rx="8" fill="#AB9FF2" fill-opacity="0.2"/>
+                  <path d="M23.5 16.5C23.5 12.3579 20.1421 9 16 9C11.8579 9 8.5 12.3579 8.5 16.5C8.5 20.158 11.1444 23.2144 14.625 23.8828V21.75C14.625 20.9216 15.2966 20.25 16.125 20.25H16.875C17.7034 20.25 18.375 20.9216 18.375 21.75V23.8828C21.8556 23.2144 24.5 20.158 24.5 16.5H23.5Z" fill="#AB9FF2"/>
+                  <circle cx="13.25" cy="15.25" r="1.25" fill="#1A1528"/>
+                  <circle cx="18.75" cy="15.25" r="1.25" fill="#1A1528"/>
+                </svg>
+              </span>
+              <span data-i18n="btnConnectPhantom">Conectar Phantom</span>
+            </button>
+            <button class="btn-signer-action" id="btn-roll-signer-3" title="Generar llave aleatoria segura con dados">
+              <svg class="inline-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle></svg> 
+              <span data-i18n="btnRollDiceSigner">Tirar Dados</span>
+            </button>
+          </div>
+
+          <div class="signer-fields">
+            <div class="field-item">
+              <span class="signer-field-label" data-i18n="btcPubSecpLabel">Clave Pública Bitcoin (secp256k1 compressed):</span>
+              <input type="text" id="signer-3-btc-pub" class="signer-input" value="02f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9" spellcheck="false">
+            </div>
+            <div class="field-item">
+              <div class="field-label-row">
+                <span class="signer-field-label" data-i18n="evmAddressLabel">Dirección EVM / Phantom:</span>
+                <span class="wallet-conn-badge" id="badge-phantom-conn" style="display: none;">● Conectado</span>
+              </div>
+              <input type="text" id="signer-3-eth-addr" class="signer-input" value="0xbDA5747bFD65F08deb54cb465eB87D40e51B197E" spellcheck="false">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button to Recalculate Multisig -->
+      <div class="multisig-compute-bar">
+        <button class="btn btn-primary" id="btn-compute-multisig">
+          <span> Generar Direcciones Multifirma 2-de-3</span>
+        </button>
+      </div>
+
+      <!-- Results Display: Bitcoin P2WSH and EVM Safe -->
+      <div class="multisig-results-grid">
+        <!-- 1. Bitcoin P2WSH Native SegWit Multisig -->
+        <div class="multi-result-card btc-border">
+          <div class="result-header">
+            <div class="badge-icon-title">
+              <span class="chain-logo-badge btc-color">₿</span>
+              <div>
+                <h3>Bitcoin Multifirma 2-de-3 (P2WSH)</h3>
+                <span class="sub-chip">Estándar Nativo SegWit · BIP-67 Deterministic Sort</span>
+              </div>
+            </div>
+            <button class="btn-copy-field btn-qr-field" id="btn-qr-btc-multisig-addr" title="Ver Código QR de la Dirección Multifirma">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="7" y="7" width="1" height="1" fill="currentColor"></rect><rect x="17" y="7" width="1" height="1" fill="currentColor"></rect><rect x="7" y="17" width="1" height="1" fill="currentColor"></rect><path d="M10 14h4v4h-4z"></path></svg>
+                <span>Ver QR</span>
+              </button>
+              <button class="btn-copy-field" id="btn-copy-btc-multisig-addr">Copiar Dirección</button>
+          </div>
+
+          <div class="multi-address-box">
+            <span class="multi-address-label">Dirección Multifirma para Recibir (62 caracteres):</span>
+            <code class="multi-address-code" id="display-btc-multisig-addr">bc1q...</code>
+          </div>
+
+          <div class="descriptor-box">
+            <div class="descriptor-head">
+              <span>Descriptor de Salida (Output Descriptor):</span>
+              <button class="btn-copy-code btn-qr-code" id="btn-qr-descriptor" title="Escanear Descriptor Air-Gapped (Hardware Wallets)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="7" y="7" width="1" height="1" fill="currentColor"></rect><rect x="17" y="7" width="1" height="1" fill="currentColor"></rect><rect x="7" y="17" width="1" height="1" fill="currentColor"></rect><path d="M10 14h4v4h-4z"></path></svg>
+              </button>
+              <button class="btn-copy-code" id="btn-copy-descriptor" title="Copiar descriptor"><svg class="inline-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg></button>
+            </div>
+            <code class="descriptor-code" id="display-btc-descriptor">wsh(sortedmulti(2,...))</code>
+          </div>
+
+          <div class="compat-footer">
+            <span>Compatible con: <strong>Sparrow Wallet, Electrum, Coldcard, Specter</strong></span>
+                        <button class="btn-ghost-sm" id="btn-print-multisig-pack" title="Imprimir Paquete de 3 Tarjetas de Respaldo Físico para Cosignatarios">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              <span>Imprimir 3 Tarjetas Frías</span>
+            </button>
+            <button class="btn-ghost-sm" id="btn-download-sparrow-config">Descargar Config (.txt)</button>
+          </div>
+        </div>
+
+        <!-- 2. Ethereum & EVM Safe (Gnosis Safe 2-de-3) -->
+        <div class="multi-result-card eth-border">
+          <div class="result-header">
+            <div class="badge-icon-title">
+              <span class="chain-logo-badge eth-color"><svg class="chain-logo-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 12l8 4.5L20 12 12 2zm0 17.5L4 13.5 12 22l8-8.5-8 5.5z"/></svg></span>
+              <div>
+                <h3>EVM Multifirma (Safe / Gnosis Safe)</h3>
+                <span class="sub-chip">MetaMask + Phantom + Respaldo (Umbral 2/3)</span>
+              </div>
+            </div>
+            <a href="https://app.safe.global" target="_blank" rel="noopener noreferrer" class="btn-ghost-sm link-out">
+              <span>Abrir Safe.global ↗</span>
+            </a>
+          </div>
+
+          <div class="safe-config-display">
+            <span class="multi-address-label">Configuración JSON para Desplegar Contrato Safe:</span>
+            <pre class="safe-json-code" id="display-safe-json"></pre>
+          </div>
+
+          <div class="compat-footer">
+            <span>Redes: <strong>Arbitrum, Polygon, Ethereum, Base, Optimism</strong></span>
+            <button class="btn-ghost-sm" id="btn-copy-safe-json">Copiar JSON</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Interactive PSBT 2-of-3 Signing Simulator -->
+      <div class="signing-simulator-card">
+        <div class="simulator-head">
+          <div>
+            <h3>Simulador Interactivo de Firma PSBT (Paso a Paso)</h3>
+            <p>Observa cómo funciona en la vida real: para mover 0.5 BTC o 2 ETH se requiere reunir al menos 2 firmas independientes.</p>
+          </div>
+          <button class="btn-ghost" id="btn-reset-simulator">Reiniciar Simulación</button>
+        </div>
+
+        <div class="sim-tx-box">
+          <div class="sim-tx-details">
+            <span class="tx-tag">Transacción Simulada:</span>
+            <strong>Enviar 0.50 BTC a bc1q_destinatario...</strong>
+            <span class="tx-status-pill" id="sim-status-pill">
+              <span class="status-radar" id="sim-radar"></span>
+              <span id="sim-status-text">0 de 2 firmas recibidas (Bloqueada)</span>
+            </span>
+          </div>
+
+          <!-- Signature Progress Gauge -->
+          <div class="sim-gauge-track">
+            <div class="sim-gauge-fill" id="sim-gauge-fill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="sim-keys-actions">
+          <div class="sim-key-col">
+            <button class="btn btn-secondary sim-sign-btn" id="btn-sim-sign-1">
+              <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg> <span>Firmar con Llave 1 (MetaMask / Coldcard)</span>
+            </button>
+            <span class="sim-key-status" id="sim-key-1-status">Pendiente</span>
+          </div>
+
+          <div class="sim-key-col">
+            <button class="btn btn-secondary sim-sign-btn" id="btn-sim-sign-2">
+              <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg> <span>Firmar con Llave 2 (Phantom / Móvil)</span>
+            </button>
+            <span class="sim-key-status" id="sim-key-2-status">Pendiente</span>
+          </div>
+
+          <div class="sim-key-col">
+            <button class="btn btn-secondary sim-sign-btn" id="btn-sim-sign-3">
+              <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg> <span>Firmar con Llave 3 (Respaldo)</span>
+            </button>
+            <span class="sim-key-status" id="sim-key-3-status">Pendiente</span>
+          </div>
+        </div>
+
+        <!-- Live Cryptographic Signatures Log -->
+        <div class="sim-signatures-log" id="sim-signatures-log" style="display: none;">
+          <div class="sig-log-header">
+            <span class="sig-log-title">Auditoría Criptográfica de Firmas (ECDSA / Ed25519 en Vivo):</span>
+            <span class="sig-log-quorum-badge" id="sig-log-quorum-badge">Quórum Pendiente</span>
+          </div>
+          <div class="sig-log-entries" id="sig-log-entries"></div>
+        </div>
+
+        <div class="sim-outcome-banner" id="sim-outcome-banner" style="display: none;">
+          <div class="outcome-icon"><svg class="inline-svg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg></div>
+          <div class="outcome-text">
+            <h4>¡Quórum Criptográfico 2-de-3 Alcanzado!</h4>
+            <p>La transacción cuenta con firmas criptográficas suficientes. El archivo PSBT está listo y validado para ser transmitido (Broadcast) a los mineros de la blockchain.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <!-- RECOVERY & INVERSE CHECKSUM SOLVER MODULE VIEW -->
+    <section class="foundry-card recovery-panel" id="view-recovery-solver" style="display: none;">
+      <div class="card-bar">
+        <div>
+          <div class="step-tag-pill">Criptoanálisis BIP-39 · Rescate Matemático</div>
+          <h1 class="stage-title">Recuperador de Semillas (Checksum Inverso)</h1>
+          <p class="stage-desc">¿Perdiste la última palabra de tu respaldo mnemónico por desgaste físico o error de copia? Las reglas del hash SHA-256 reducen el universo de búsqueda: exactamente 128 opciones para 12 palabras, o sólo 8 opciones para 24 palabras.</p>
+        </div>
+
+        <div class="recovery-status-chip">
+          <span class="badge-dot-cyan"></span>
+          <span>Algoritmo Oficial SHA-256 BIP-39</span>
+        </div>
+      </div>
+
+      <!-- Mode Selector & Quick Samples Bar -->
+      <div class="recovery-toolbar">
+        <div class="recovery-mode-selector" id="recovery-length-selector">
+          <button class="seg-btn is-active" data-length="12">
+            <strong>11 Palabras Conocidas</strong>
+            <span>(Falta la #12 · 128 candidatas)</span>
+          </button>
+          <button class="seg-btn" data-length="24">
+            <strong>23 Palabras Conocidas</strong>
+            <span>(Falta la #24 · ¡Solo 8 candidatas!)</span>
+          </button>
+        </div>
+
+        <div class="recovery-sample-actions">
+          <button class="btn-ghost-sm" id="btn-recovery-load-sample">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Cargar Ejemplo</span>
+          </button>
+          <button class="btn-ghost-sm" id="btn-recovery-clear">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            <span>Limpiar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="recovery-input-section">
+        <div class="recovery-input-head">
+          <label for="recovery-words-input" class="recovery-input-label">Palabras Conocidas en Orden (separadas por espacio):</label>
+          <span class="recovery-word-counter" id="recovery-word-counter">0 / 11 palabras</span>
+        </div>
+        <textarea id="recovery-words-input" class="recovery-textarea" rows="3" placeholder="Pega o escribe las palabras aquí (ej: abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon)..." spellcheck="false"></textarea>
+        <div class="recovery-input-feedback" id="recovery-input-feedback"></div>
+      </div>
+
+      <!-- Compute Button Bar -->
+      <div class="recovery-action-bar">
+        <button class="btn btn-primary" id="btn-compute-recovery">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24M14.83 9.17l4.24-4.24M14.83 14.83l4.24 4.24M9.17 14.83l-4.24 4.24"></path></svg> <span data-i18n="recoveryBtnCalculate">Calcular Palabras Válidas & Checksum Inverso</span>
+        </button>
+      </div>
+
+      <!-- Results Viewport -->
+      <div class="recovery-results-container" id="recovery-results-container" style="display: none;">
+        <!-- Mathematical Proof Ribbon -->
+        <div class="recovery-math-ribbon">
+          <div class="math-stat-item">
+            <span class="math-stat-label">CANDIDATAS VÁLIDAS:</span>
+            <span class="math-stat-val text-cyan" id="stat-valid-candidates-count">0</span>
+          </div>
+          <div class="math-stat-item">
+            <span class="math-stat-label">ESPACIO DESCARTADO:</span>
+            <span class="math-stat-val text-green" id="stat-rejected-space-pct">0%</span>
+          </div>
+          <div class="math-stat-item">
+            <span class="math-stat-label">BITS CHECKSUM SHA-256:</span>
+            <span class="math-stat-val text-dim" id="stat-checksum-bits-desc">4 bits</span>
+          </div>
+          <div class="math-stat-item">
+            <span class="math-stat-label">ENTROPÍA CONOCIDA:</span>
+            <span class="math-stat-val text-dim" id="stat-known-entropy-bits">121 bits</span>
+          </div>
+        </div>
+
+        <!-- Filter and Search Bar (useful for 128 words) -->
+        <div class="recovery-filter-bar" id="recovery-filter-bar">
+          <div class="filter-input-wrapper">
+            <input type="text" id="recovery-filter-input" placeholder="Filtrar por letra o prefijo (ej: 'b' o 'cat')...">
+          </div>
+          <span class="filter-results-tag" id="filter-results-tag">Mostrando todas</span>
+        </div>
+
+        <!-- Candidate Cards Grid -->
+        <div class="recovery-candidates-grid" id="recovery-candidates-grid"></div>
+
+        <!-- Reconstructed Phrase Preview Box -->
+        <div class="recovery-reconstruction-box" id="recovery-reconstruction-box" style="display: none;">
+          <div class="reconstruction-header">
+            <div>
+              <span class="sub-chip">Frase Semilla Reconstruida</span>
+              <h4 id="reconstructed-title">Frase Completa Lista</h4>
+            </div>
+            <div class="reconstruction-actions">
+              <button class="btn-ghost-sm" id="btn-copy-reconstructed">Copiar Frase</button>
+              <button class="btn-ghost-sm" id="btn-qr-reconstructed">Ver QR</button>
+            </div>
+          </div>
+          <div class="reconstructed-phrase-display">
+            <code id="reconstructed-phrase-text">--</code>
+          </div>
+          <div class="reconstructed-addresses-row" id="reconstructed-addresses-row"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="pedagogy-card">
+      <div class="pedagogy-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      </div>
+      <div class="pedagogy-body">
+        <h4>Fundamento de Seguridad: El método de Ian Coleman y Coldcard</h4>
+        <p>A diferencia de los generadores pseudoaleatorios de navegadores o apps poco auditadas, las tiradas con dados reales de 6 caras ($D6$) escapan por completo de cualquier puerta trasera de hardware. Con 50 tiradas generamos un espacio de posibilidades de $6^{50} \approx 8.07 \times 10^{38}$, superando con creces los $2^{128} \approx 3.40 \times 10^{38}$ estados requeridos para una semilla irrompible.</p>
+      </div>
+    </footer>
+  </main>
+
+
+  <!-- AIR-GAPPED QR CODE VIEWER MODAL -->
+  <div class="qr-modal-backdrop" id="qr-modal-backdrop" style="display: none;">
+    <div class="qr-modal-container" role="dialog" aria-labelledby="qr-modal-title">
+      <div class="qr-modal-header">
+        <div class="qr-modal-title-group">
+          <div class="qr-badge-chip" id="qr-modal-badge">Air-Gapped Optical QR</div>
+          <h3 id="qr-modal-title" class="qr-modal-title">Código QR Criptográfico</h3>
+          <p id="qr-modal-desc" class="qr-modal-desc">Escaneo seguro sin conexión. Compatible con teléfonos móviles y cámaras de billeteras frías de hardware.</p>
+        </div>
+        <button class="btn-icon-close" id="btn-close-qr-modal" aria-label="Cerrar modal">&times;</button>
+      </div>
+
+      <div class="qr-modal-body">
+        <!-- High Contrast QR Optical Card -->
+        <div class="qr-optical-stage">
+          <div class="qr-canvas-wrapper" id="qr-canvas-wrapper">
+            <img id="qr-img" class="qr-img" width="250" height="250" alt="Código QR Criptográfico" style="display: block; border-radius: 4px;">
+            <canvas id="qr-canvas" class="qr-canvas" width="250" height="250" style="display: none;"></canvas>
+          </div>
+          <div class="qr-format-indicator" id="qr-format-indicator">URI Estándar BIP-21</div>
+        </div>
+
+        <!-- Address or Data Details -->
+        <div class="qr-data-pane">
+          <div class="qr-data-label-row">
+            <span class="qr-data-label" id="qr-data-label">Contenido Criptográfico:</span>
+            <span class="qr-len-counter" id="qr-len-counter">-- caracteres</span>
+          </div>
+
+          <div class="qr-data-textbox">
+            <code id="qr-data-text" class="qr-data-text">--</code>
+          </div>
+
+          <div class="qr-modal-actions">
+            <button class="btn btn-secondary btn-sm" id="btn-copy-qr-text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span>Copiar Texto</span>
+            </button>
+
+            <button class="btn btn-primary btn-sm" id="btn-download-qr-png">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Guardar Imagen (.png)</span>
+            </button>
+
+            <button class="btn btn-ghost-sm" id="btn-download-qr-svg">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              <span>Vector (.svg)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-hub" id="toast-hub"></div>
+
+
+  <!-- PRINT PREVIEW & CONFIGURATION MODAL -->
+  <div class="print-modal-backdrop" id="print-modal-backdrop" style="display: none;">
+    <div class="print-modal-container" role="dialog" aria-labelledby="print-modal-title">
+      <div class="print-modal-header">
+        <div class="print-modal-title-group">
+          <div class="print-badge-chip">Cypherpunk Cold Storage Suite</div>
+          <h2 id="print-modal-title" class="print-modal-title">Tarjeta de Respaldo Físico (Cold Card)</h2>
+          <p class="print-modal-subtitle">Genera plantillas de grado de archivo listas para punzonar en placas de acero (Cryptosteel/Keystone) o archivar en bóveda ignífuga sin conexión.</p>
+        </div>
+        <button class="btn-icon-close" id="btn-close-print-modal" aria-label="Cerrar modal">&times;</button>
+      </div>
+
+      <div class="print-modal-body">
+        <!-- Configuration Controls Sidebar -->
+        <aside class="print-config-pane">
+          <div class="config-section">
+            <label class="config-label">Tipo de Plantilla</label>
+            <div class="config-segmented-control" id="print-template-type-selector">
+              <button class="seg-btn is-active" data-type="single">Semilla Simple</button>
+              <button class="seg-btn" data-type="multisig">Tríptico 2-de-3 (3 Tarjetas)</button>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <label class="config-label">Diseño Físico</label>
+            <div class="config-segmented-control" id="print-layout-style-selector">
+              <button class="seg-btn is-active" data-layout="steel">Placa de Acero / Tarjeta (85×54mm)</button>
+              <button class="seg-btn" data-layout="certificate">Hoja de Bóveda A4 / Auditoría</button>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <label class="config-label">Opciones de Seguridad</label>
+            <div class="config-checkbox-group">
+              <label class="toggle-checkbox-label">
+                <input type="checkbox" id="chk-print-reveal-words" checked>
+                <span>Rellenar palabras generadas</span>
+              </label>
+              <span class="chk-hint">Desmárcalo para imprimir casillas vacías y escribir a mano con tinta indeleble o punzón.</span>
+
+              <label class="toggle-checkbox-label">
+                <input type="checkbox" id="chk-print-highlight-4letters" checked>
+                <span>Destacar primeras 4 letras (BIP-39 Punch Standard)</span>
+              </label>
+              <span class="chk-hint">En el diccionario BIP-39, solo los primeros 4 caracteres son únicos para cada palabra.</span>
+
+              <label class="toggle-checkbox-label">
+                <input type="checkbox" id="chk-print-include-sha256" checked>
+                <span>Incluir huella SHA-256 de verificación</span>
+              </label>
+              <span class="chk-hint">Permite verificar matemáticamente la entropía sin exponer las palabras mnemónicas.</span>
+            </div>
+          </div>
+
+          <div class="print-modal-actions">
+            <button class="btn btn-primary btn-block" id="btn-download-coldcard-file" style="margin-bottom: 0.5rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> <span>Descargar Tarjeta (.html autónomo)</span>
+            </button>
+
+            <button class="btn btn-secondary btn-block" id="btn-download-coldcard-svg" style="margin-bottom: 0.5rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> <span>Descargar Vectorial (.svg grabado láser)</span>
+            </button>
+
+            <button class="btn btn-ghost btn-block" id="btn-trigger-print">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              <svg class="inline-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> <span>Diálogo de Impresora (Ctrl + P)</span>
+            </button>
+            <p class="print-instruction-note"><svg class="inline-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5h6.18z"></path></svg> Guarda el archivo <strong>.html</strong> o <strong>.svg</strong> para llevarlo en pendrive cifrado o mandarlo a imprimir en placa de metal.</p>
+          </div>
+        </aside>
+
+        <!-- Live Realistic Paper Preview Canvas -->
+        <main class="print-preview-viewport">
+          <div class="preview-viewport-bar">
+            <span class="preview-scale-label">Vista Previa Fidedigna de Impresión (Contraste 100% Tinta/Acero)</span>
+          </div>
+          <div class="preview-paper-stage" id="print-preview-content">
+            <!-- Dynamic Preview Content populated by JS -->
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEDICATED DOM NODE EXCLUSIVELY RENDERED IN @media print -->
+  <div id="print-document-root" class="print-document-root" aria-hidden="true">
+    <!-- Dynamic Print Content populated by JS on print -->
+  </div>
+
+  <!-- BIP-39 Wordlist & Multichain Bundle Scripts -->
+  <script src="bip39-wordlist.js"></script>
+  <script src="multichain.bundle.js"></script>
+  <script src="qrcode.bundle.js"></script>
+  <script src="i18n.js?v=5"></script>
+  <script src="app.js?v=5"></script>
+</body>
+</html>
